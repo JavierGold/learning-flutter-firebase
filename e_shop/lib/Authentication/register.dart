@@ -39,7 +39,7 @@ class _RegisterState extends State<Register>
           children: [
             SizedBox(height: 10,),
             InkWell(
-              onTap: ()=>print("selected"),
+              onTap: _selectAndPickImage,
               child: CircleAvatar(
                 radius: _screenWidth * 0.15,
                 backgroundColor:Colors.white38,
@@ -81,7 +81,7 @@ class _RegisterState extends State<Register>
               ),
             ),
             ElevatedButton(
-              onPressed: ()=>("clicked"),
+              onPressed: () {uploadAndSaveImage();},
               child: Text("Inicia Sesión",style: TextStyle(color: Colors.white),),
             ),
             SizedBox(
@@ -100,5 +100,71 @@ class _RegisterState extends State<Register>
       ),
     );
   }
+
+  Future<void>_selectAndPickImage()async{
+    _imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+  }
+
+  Future<void>uploadAndSaveImage(){
+    if(_imageFile == null){
+      showDialog(
+          context: context,
+          builder: (c)
+      {
+        return ErrorAlertDialog(message: "Selecciona una imagen",);
+      }
+      );
+    }
+    else{
+      _passwordTextEditingController.text == _cPasswordTextEditingController.text
+          ? _emailTextEditingController.text.isNotEmpty &&
+          _passwordTextEditingController.text.isNotEmpty &&
+          _cPasswordTextEditingController.text.isNotEmpty &&
+          _nameTextEditingController.text.isNotEmpty
+
+          ? uploadToStorage()
+
+          :displayDialog("Llena todos los campos encesarios")
+
+          :displayDialog("La contraseña no coincide");
+    }
+  }
+
+  displayDialog(String msg){
+    showDialog(
+      context: context,
+      builder: (c){
+        return ErrorAlertDialog(message: msg,);
+      }
+    );
+  }
+
+  uploadToStorage()async{
+
+    showDialog(
+        context: context,
+        builder: (c){
+          return LoadingAlertDialog(message: "Autenticando, Por favor espere...",);
+        }
+    );
+      String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
+
+      StorageReference storageReference = FirebaseStorage.instance.ref().child(imageFileName);
+
+      StorageUploadTask storageUploadTask =storageReference.putFile(_imageFile);
+
+      StorageTaskSnapshot taskSnapshot = await storageUploadTask.onComplete;
+
+      await taskSnapshot.ref.getDownloadURL().then((urlImage){
+          userImageUrl = urlImage;
+
+          _registerUser();
+      });
+  }
+
+  _registerUser(){
+
+  }
 }
+
 
