@@ -16,6 +16,8 @@ Future<void> main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
 
+  EcommerceApp.auth = FirebaseAuth.instance;
+
   runApp(MyApp());
 }
 
@@ -52,18 +54,43 @@ class _SplashScreenState extends State<SplashScreen>
 
   displaySplash(){
     Timer(Duration(seconds: 5), () async {
-      
+      if(await EcommerceApp.auth.currentUser() != null){
+        Route route = MaterialPageRoute(builder:(_) => StoreHome() );
+        Navigator.pushReplacement(context, route);
+      }else{
+        Route route = MaterialPageRoute(builder:(_) => AuthenticScreen() );
+        Navigator.pushReplacement(context, route);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Center(
-        child: Text(
-            "Welcome to Flutter Firetore eCommerce Course by Coding Cafe.",
-          style: TextStyle(color: Colors.green, fontSize: 20.0),
-          textAlign: TextAlign.center,
+      child: Container(
+        decoration: new BoxDecoration(
+          gradient: new LinearGradient(
+              colors: [Colors.blue,Colors.lightBlueAccent],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(1.0, 0.0),
+             stops: [0.0,1.0],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("images/welcome.png"),
+              SizedBox( height: 20.0),
+              Text(
+                  "Tienda Online",
+                style: TextStyle(
+                  color: Colors.white
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
