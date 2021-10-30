@@ -17,6 +17,8 @@ Future<void> main() async
   WidgetsFlutterBinding.ensureInitialized();
 
   EcommerceApp.auth = FirebaseAuth.instance;
+  EcommerceApp.sharedPreferences = await SharedPreferences.getInstance();
+  EcommerceApp.firestore=Firestore.instance;
 
   runApp(MyApp());
 }
