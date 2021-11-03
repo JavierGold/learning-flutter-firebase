@@ -145,7 +145,7 @@ class _RegisterState extends State<Register>
     showDialog(
         context: context,
         builder: (c){
-          return LoadingAlertDialog(message: "Autenticando, Por favor espere...",);
+          return LoadingAlertDialog(message: "Registrando, Por favor espere...",);
         }
     );
       String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
@@ -198,6 +198,7 @@ class _RegisterState extends State<Register>
       "email":fUser.email,
       "name": _nameTextEditingController.text.trim(),
       "url": userImageUrl,
+      EcommerceApp.userCartList: []
     });
     
     await EcommerceApp.sharedPreferences.setString("uid", fUser.uid);
